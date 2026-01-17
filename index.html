@@ -196,7 +196,72 @@ function back(){
   document.getElementById('game').style.display='none';
   document.getElementById('menu').style.display='block';
 }
+// --- JOKE ENGINE UPDATE ---
+let jokesTold = 0;
+const maxJokes = 3;
 
+function tellJoke() {
+  clickSound();
+  const c = document.getElementById('chatBox');
+  
+  if (jokesTold >= maxJokes) {
+    c.innerText = "⚠️ Limit reached! Get back to the delivery planner! 🛒";
+    c.style.display = 'block';
+    setTimeout(() => c.style.display = 'none', 3000);
+    return;
+  }
+
+  const jokes = [
+    "Why did the grocery store hire the clock? It was great at overtime!",
+    "Customer: 'Do you have skeleton keys?' Me: 'Try the graveyard section.'",
+    "I told my manager I wanted a raise. He said, 'The only thing rising here is the bread.'",
+    "Why was the conveyor belt always tired? It never stopped moving!",
+    "What's a retail worker's favorite exercise? The 'Shelf-Press'.",
+    "How many supervisors does it take to change a lightbulb? Five. One to do it and four to sign off the risk assessment.",
+    "The freezer delivery arrived late today. The driver was pretty 'chill' about it.",
+    "Why did the tomato turn red? Because it saw the salad dressing!",
+    "What do you call a retail worker who never sits down? An employee of the month.",
+    "Why are retail jokes so short? So they can get back to the shop floor.",
+    "The baler is like a middle manager: Under a lot of pressure but does a great job crushing things.",
+    "Why did the shopper bring a ladder? They heard the prices were high.",
+    "My boss told me to have a good day... so I went home.",
+    "What's the retail version of a horror movie? A customer walking in 1 minute before closing.",
+    "Why do melons have weddings? Because they cant-a-loupe!",
+    "I'm reading a book on anti-gravity retail. It's impossible to put down!",
+    "What did the scanner say to the EAN? 'I've got my eye on you.'",
+    "Why did the bread go to the doctor? It was feeling crumby.",
+    "Why was the computer cold at the checkout? It left its Windows open.",
+    "Working in the chiller is cool, but working in the freezer is 'ice' to meet you.",
+    "What's the best way to catch a grocery thief? Use a 'catch-up' bottle.",
+    "Why did the employee get fired from the calendar factory? He took a day off.",
+    "What do you call a pile of cats in a warehouse? A 'meow-tain' of stock.",
+    "The shift leader told me to 'hit the floor.' I think he meant start mopping, but I'm still bruised.",
+    "Why did the strawberry cry? Because its parents were in a jam.",
+    "How do you fix a broken pizza? With tomato paste!",
+    "Why did the shopkeeper keep a pencil behind his ear? To draw some customers.",
+    "What's a retail worker's least favorite song? 'The Final Countdown' (at 10:59 PM).",
+    "Why did the milk go to jail? It was 'past-your-eyes' (pasteurized).",
+    "I used to be a baker, but I couldn't make enough dough.",
+    "Why did the man get hit by a pallet? He didn't see it coming 'weight' for it.",
+    "What do you call a fake noodle? An Impasta!",
+    "The warehouse is so big it has its own weather system: mostly grey with a chance of pallets.",
+    "Why did the orange stop in the middle of the road? It ran out of juice!",
+    "How does a cucumber become a pickle? It goes through a jarring experience.",
+    "What did the manager say when I asked for a break? 'Give me a minute... or thirty.'",
+    "Why did the egg hide? It was a little chicken.",
+    "What is a grocery's favorite music? 'Heavy Metal' (for the canned goods).",
+    "Why did the lettuce win the race? Because it was ahead!",
+    "Why do we put 'Fragile' on boxes? So the drivers know which ones to drop carefully."
+  ];
+
+  // Randomize selection
+  const text = jokes[Math.floor(Math.random() * jokes.length)];
+  c.innerText = text;
+  c.style.display = 'block';
+  jokesTold++;
+  
+  setTimeout(() => c.style.display = 'none', 5000);
+}
 function tellJoke(){
   clickSound();
   const jokes = ["Why did the grocery store hire the clock? It was great at overtime!", "Customer: 'Do you have any skeleton keys?' Me: 'No, try the graveyard section.'"];
@@ -209,3 +274,4 @@ function tellJoke(){
 </script>
 </body>
 </html>
+
