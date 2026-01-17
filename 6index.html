@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Retail Training - CypherX</title>
+  <style>
+    :root {
+      --primary: #3b82f6; --secondary: #6366f1; --success: #10b981;
+      --bg-dark: #0f172a; --glass: rgba(30, 41, 59, 0.7);
+      --glass-border: rgba(255, 255, 255, 0.1);
+    }
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    body {
+      margin: 0; font-family: 'Inter', sans-serif;
+      background: radial-gradient(circle at 50% 0%, #1e293b, #020617);
+      display: flex; justify-content: center; align-items: center; height: 100vh; color: #f8fafc; overflow: hidden;
+    }
+    .mobile-frame {
+      width: 100%; max-width: 480px; height: 95%; max-height: 850px;
+      border-radius: 40px; overflow: hidden; background: var(--bg-dark);
+      box-shadow: 0 0 0 12px #334155, 0 30px 60px rgba(0,0,0,0.8);
+      display: flex; flex-direction: column; position: relative;
+    }
+    .header {
+      padding: 20px; text-align: center; font-weight: 700; font-size: 1.1rem;
+      background: rgba(15, 23, 42, 0.9); backdrop-filter: blur(10px); border-bottom: 1px solid var(--glass-border);
+    }
+    .screen { flex: 1; overflow-y: auto; padding: 20px; }
+    
+    .list { 
+      height: 280px; overflow-y: scroll; padding: 10px;
+      background: rgba(0,0,0,0.2); border-radius: 12px; border: 1px inset var(--glass-border);
+    }
+    .list::-webkit-scrollbar { width: 6px; }
+    .list::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 10px; }
+
+    .btn {
+      width: 100%; padding: 16px; font-size: 14px; font-weight: 600; border: none; border-radius: 16px;
+      background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; cursor: pointer; 
+      transition: transform 0.1s; margin-bottom: 5px;
+    }
+    .btn:active { transform: scale(0.96); }
+    .btn.secondary { background: rgba(255, 255, 255, 0.1); border: 1px solid var(--glass-border); }
+    
+    .card { background: var(--glass); backdrop-filter: blur(12px); border: 1px solid var(--glass-border); border-radius: 20px; padding: 20px; margin-bottom: 16px; }
+    
+    /* REMOVED DELAYED ANIMATION TO FIX EMPTY GAPS */
+    .item { 
+        padding: 12px 16px; margin: 8px 0; border-radius: 12px; 
+        background: rgba(0, 0, 0, 0.4); border: 1px solid var(--glass-border); 
+        font-family: monospace; height: 46px; display: flex; align-items: center;
+        /* Seamless structure: removed opacity 0 and translateX */
+    }
+    
+    .highlight { animation: flashSuccess 1.5s ease forwards !important; }
+    @keyframes flashSuccess { 0% { background: var(--success); transform: scale(1.02); } 100% { background: rgba(0, 0, 0, 0.4); transform: scale(1); } }
+    
+    input { width: 100%; padding: 14px; border-radius: 14px; border: 2px solid var(--glass-border); background: rgba(0, 0, 0, 0.3); color: white; margin-top: 10px; }
+    
+    .footer { padding: 15px; text-align: center; font-size: 11px; color: #64748b; border-top: 1px solid var(--glass-border); }
+    
+    #chatbotBtn { position: absolute; bottom: 20px; right: 20px; width: 54px; height: 54px; border-radius: 50%; background: linear-gradient(135deg, #ec4899, #f43f5e); color: white; border: none; font-size: 24px; cursor: pointer; z-index: 30; }
+    #chatBox { position: absolute; bottom: 85px; left: 20px; right: 20px; background: rgba(30, 41, 59, 0.95); border: 1px solid rgba(255,255,255,0.1); border-radius: 18px; padding: 16px; display: none; z-index: 20; color: #e2e8f0; font-size: 14px;}
+  </style>
+</head>
+<body>
+
+<div class="mobile-frame">
+  <div class="header">Retail EAN Placement Game</div>
+
+  <div class="screen" id="menu">
+    <div class="card">
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+        <button class="btn" onclick="openDept('Ambient')">🥫 Ambient</button>
+        <button class="btn" onclick="openDept('Chiller')">🧊 Chiller</button>
+        <button class="btn" onclick="openDept('Meat')">🥩 Meat</button>
+        <button class="btn" onclick="openDept('Convenience')">🛒 Convenience</button>
+        <button class="btn" onclick="openDept('Bread')">🍞 Bread</button>
+        <button class="btn" onclick="openDept('Freezer')">❄️ Freezer</button>
+        <button class="btn" onclick="openDept('FruitVeg')">🥦 Fruit & Veg</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="screen" id="game" style="display:none;">
+    <div class="card">
+      <h3 id="deptTitle" style="margin:0 0 10px 0;"></h3>
+      <div class="list" id="eanList"></div>
+      <div style="text-align:center; font-size:10px; color:var(--primary); margin-top:5px;">↑ Scroll to view all ↑</div>
+    </div>
+    <div class="card">
+      <input id="newEAN" type="number" placeholder="Enter New EAN" />
+      <input id="afterEAN" type="number" placeholder="Place After EAN" />
+      <div style="display:flex; gap:12px; margin-top:15px;">
+        <button class="btn" onclick="insertEAN()">➕ Insert / Move</button>
+        <button class="btn secondary" onclick="back()">⬅ Back</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">Created by CypherX
+    <button id="chatbotBtn" onclick="tellJoke()">💬</button>
+    <div id="chatBox"></div>
+  </div>
+</div>
+
+<script>
+// --- AUDIO ENGINE ---
+let audioCtx;
+
+function initAudio() {
+    if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+    }
+}
+
+function playTone(freq, duration, type = 'sine') {
+    initAudio();
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = type;
+    osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+    gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc.start();
+    osc.stop(audioCtx.currentTime + duration);
+}
+
+const clickSound = () => playTone(600, 0.1);
+const successSound = () => { playTone(800, 0.1); setTimeout(() => playTone(1200, 0.15), 100); };
+
+// --- LOGIC ---
+const ranges={ Ambient:[5746,5799], Chiller:[5709,5711], Freezer:[5812,5813], Bread:[10002,10004], Meat:[10005,10006], FruitVeg:[10011,10012], Convenience:[20001,20002] };
+let current=[];
+let lastMovedEAN = null;
+
+function openDept(d){
+  clickSound();
+  document.getElementById('menu').style.display='none';
+  document.getElementById('game').style.display='block';
+  document.getElementById('deptTitle').innerText=d;
+  const [s,e]=ranges[d];
+  current=[s];
+  while(current.length<11) current.push(s+Math.floor(Math.random()*500)+1);
+  current.push(e);
+  lastMovedEAN = null;
+  render();
+}
+
+function render(){
+  const list=document.getElementById('eanList');
+  list.innerHTML='';
+  current.forEach((v)=>{
+    const d=document.createElement('div');
+    d.className='item' + (v === lastMovedEAN ? ' highlight' : '');
+    // Removed animationDelay to ensure seamless structure
+    d.innerText=v;
+    list.appendChild(d);
+  });
+
+  if(lastMovedEAN) {
+      setTimeout(() => {
+          const highlighted = document.querySelector('.highlight');
+          if(highlighted) highlighted.scrollIntoView({behavior: "smooth", block: "center"});
+      }, 100);
+  }
+}
+
+function insertEAN(){
+  const e=+document.getElementById('newEAN').value;
+  const a=+document.getElementById('afterEAN').value;
+  if(!e||!a) { clickSound(); return; }
+
+  current=current.filter(x=>x!==e);
+  const i=current.indexOf(a);
+  if(i>=0){
+    current.splice(i+1,0,e);
+    lastMovedEAN = e;
+    successSound(); 
+  } else {
+    clickSound();
+  }
+  render();
+  document.getElementById('newEAN').value='';
+  document.getElementById('afterEAN').value='';
+}
+
+function back(){
+  clickSound();
+  document.getElementById('game').style.display='none';
+  document.getElementById('menu').style.display='block';
+}
+
+function tellJoke(){
+  clickSound();
+  const jokes = ["Why did the grocery store hire the clock? It was great at overtime!", "Customer: 'Do you have any skeleton keys?' Me: 'No, try the graveyard section.'"];
+  const text = jokes[Math.floor(Math.random()*jokes.length)];
+  const c=document.getElementById('chatBox');
+  c.innerText=text;
+  c.style.display='block';
+  setTimeout(()=>c.style.display='none',4000);
+}
+</script>
+</body>
+</html>
