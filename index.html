@@ -2,21 +2,30 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+
+<!-- zoom disabled -->
+<meta name="viewport"
+content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no, maximum-scale=1" />
 
 <title>Retail Training - CypherX</title>
 
 <style>
 
-/* ======================
-   PERFECT HEIGHT (iOS SAFE)
-   ====================== */
+/* ===== GLOBAL ===== */
+*{
+  box-sizing:border-box;
+  -webkit-tap-highlight-color:transparent;
+  touch-action:manipulation;
+}
+
+html,body{
+  margin:0;
+  height:100%;
+}
 
 body{
-  margin:0;
   height:100dvh;
-
-  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display",Inter,sans-serif;
+  font-family:-apple-system,BlinkMacSystemFont,Inter,sans-serif;
 
   display:flex;
   justify-content:center;
@@ -28,39 +37,25 @@ body{
     radial-gradient(circle at 20% 20%, #1a2a55 0%, transparent 40%),
     radial-gradient(circle at 80% 80%, #301b4a 0%, transparent 40%),
     linear-gradient(160deg,#0b0f19,#05070c);
-
-  padding:
-    env(safe-area-inset-top)
-    env(safe-area-inset-bottom);
 }
 
-
-/* ======================
-   FRAME
-   ====================== */
-
+/* ===== FRAME ===== */
 .mobile-frame{
   width:100%;
   height:100%;
   max-width:520px;
 
-  backdrop-filter: blur(40px);
-  background:rgba(15,20,35,0.8);
-
-  border-radius:40px;
-  border:1px solid rgba(255,255,255,.12);
-
   display:flex;
   flex-direction:column;
 
+  backdrop-filter:blur(40px);
+  background:rgba(15,20,35,0.85);
+
+  border-radius:40px;
   overflow:hidden;
 }
 
-
-/* ======================
-   HEADER
-   ====================== */
-
+/* ===== HEADER ===== */
 .header{
   padding:16px;
   text-align:center;
@@ -68,90 +63,75 @@ body{
   background:rgba(255,255,255,.08);
 }
 
-
-/* ======================
-   SCREENS (NO SCROLL HERE)
-   ====================== */
-
-.screen{
+/* ===== MENU ===== */
+#menu{
   flex:1;
-  display:flex;
-  flex-direction:column;
   padding:16px;
-  overflow:hidden; /* 🔥 IMPORTANT FIX */
-}
-
-
-/* ======================
-   MENU GRID
-   ====================== */
-
-.menu-grid{
-  flex:1;
   display:grid;
   grid-template-columns:1fr 1fr;
   gap:12px;
 }
 
-.menu-grid .btn{
-  height:100%;
+.btn{
+  border:none;
+  border-radius:18px;
+  padding:16px;
+  font-size:16px;
+  font-weight:600;
+  color:white;
+  background:linear-gradient(145deg,#4f8cff,#7c5cff);
 }
 
+.btn.secondary{
+  background:rgba(255,255,255,.12);
+}
 
-/* ======================
-   LIST (ONLY SCROLL HERE)
-   ====================== */
+/* ===== GAME LAYOUT ===== */
+#game{
+  height:100%;
+  padding:14px;
+  display:grid;
+  grid-template-rows:1fr auto;
+  gap:12px;
+}
 
+/* scroll area */
 .list{
-  flex:1;
-  overflow-y:auto; /* 🔥 ONLY SCROLLER */
-  margin-bottom:12px;
+  overflow-y:auto;
+  background:rgba(255,255,255,.06);
+  border-radius:14px;
+  padding:10px;
 }
 
 .item{
   padding:12px;
   margin:8px 0;
-  border-radius:14px;
-  background:rgba(255,255,255,.06);
+  border-radius:12px;
+  background:rgba(255,255,255,.08);
   font-family:monospace;
+  font-size:16px;
 }
 
 .highlight{
   background:#30d158!important;
 }
 
-
-/* ======================
-   BUTTONS
-   ====================== */
-
-.btn{
-  border:none;
-  border-radius:18px;
-  font-weight:600;
-  color:white;
-  padding:14px;
-
-  background:linear-gradient(145deg,#4f8cff,#7c5cff);
+/* controls */
+.controls{
+  background:rgba(255,255,255,.06);
+  padding:12px;
+  border-radius:14px;
 }
-
-.btn.secondary{
-  background:rgba(255,255,255,.1);
-}
-
-
-/* ======================
-   INPUT
-   ====================== */
 
 input{
   width:100%;
   padding:12px;
-  border-radius:14px;
+  border-radius:12px;
   margin-bottom:8px;
-  background:rgba(255,255,255,.08);
   border:none;
+  background:rgba(255,255,255,.1);
   color:white;
+  font-size:16px;
 }
 
 .footer{
@@ -171,11 +151,8 @@ input{
 
 <div class="header">Retail EAN Placement Game</div>
 
-
 <!-- MENU -->
-<div class="screen" id="menu">
-
-<div class="menu-grid">
+<div id="menu">
 <button class="btn" onclick="openDept('Ambient')">🥫 Ambient</button>
 <button class="btn" onclick="openDept('Chiller')">🧊 Chiller</button>
 <button class="btn" onclick="openDept('Meat')">🥩 Meat</button>
@@ -185,19 +162,16 @@ input{
 <button class="btn" onclick="openDept('FruitVeg')">🥦 Fruit & Veg</button>
 </div>
 
-</div>
-
-
 <!-- GAME -->
-<div class="screen" id="game" style="display:none;">
+<div id="game" style="display:none">
 
 <div class="list" id="eanList"></div>
 
-<div>
+<div class="controls">
 <input id="newEAN" maxlength="7" placeholder="Enter New EAN"/>
 <input id="afterEAN" maxlength="7" placeholder="Place After EAN"/>
 
-<div style="display:flex;gap:10px;">
+<div style="display:flex;gap:8px;">
 <button class="btn" onclick="insertEAN()">➕ Insert</button>
 <button class="btn secondary" onclick="back()">⬅ Back</button>
 </div>
@@ -212,7 +186,47 @@ input{
 
 <script>
 
-/* SAME STRICT LOGIC */
+/* =====================
+   HAPTIC + SOUND
+   ===================== */
+
+let audioCtx;
+
+function tone(freq,dur){
+  if(!audioCtx) audioCtx = new (window.AudioContext||window.webkitAudioContext)();
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  osc.frequency.value=freq;
+  gain.gain.value=0.15;
+  gain.gain.exponentialRampToValueAtTime(0.001,audioCtx.currentTime+dur);
+  osc.connect(gain);
+  gain.connect(audioCtx.destination);
+  osc.start();
+  osc.stop(audioCtx.currentTime+dur);
+}
+
+function clickSound(){ tone(600,0.05); }
+function successSound(){ tone(900,0.05); setTimeout(()=>tone(1200,0.07),60); }
+function haptic(ms=8){ if(navigator.vibrate) navigator.vibrate(ms); }
+
+/* auto click feedback */
+document.addEventListener("click",e=>{
+  if(e.target.classList.contains("btn")){
+    clickSound();
+    haptic(8);
+  }
+});
+
+
+/* =====================
+   GAME LOGIC
+   ===================== */
+
+const menuEl = document.getElementById("menu");
+const gameEl = document.getElementById("game");
+const listEl = document.getElementById("eanList");
+const newEAN = document.getElementById("newEAN");
+const afterEAN = document.getElementById("afterEAN");
 
 const ranges={
 Ambient:[5746,5799],
@@ -228,48 +242,55 @@ let current=[];
 let lastMovedEAN=null;
 
 function openDept(d){
-menu.style.display='none';
-game.style.display='flex';
+  menuEl.style.display='none';
+  gameEl.style.display='grid';
 
-const [s,e]=ranges[d];
-current=[s];
-while(current.length<11)
-current.push(s+Math.floor(Math.random()*500)+1);
-current.push(e);
+  const [s,e]=ranges[d];
 
-render();
+  current=[s];
+  while(current.length<11)
+    current.push(s+Math.floor(Math.random()*500)+1);
+  current.push(e);
+
+  render();
 }
 
 function render(){
-eanList.innerHTML='';
-current.forEach(v=>{
-const d=document.createElement('div');
-d.className='item'+(v===lastMovedEAN?' highlight':'');
-d.innerText=v;
-eanList.appendChild(d);
-});
+  listEl.innerHTML='';
+  current.forEach(v=>{
+    const el=document.createElement('div');
+    el.className='item'+(v===lastMovedEAN?' highlight':'');
+    el.innerText=v;
+    listEl.appendChild(el);
+  });
 }
 
 function insertEAN(){
-const e=newEAN.value.trim();
-const a=afterEAN.value.trim();
-if(!/^\d{1,7}$/.test(e)||!/^\d{1,7}$/.test(a)) return;
-if(current.includes(+e)) return;
+  const e=newEAN.value.trim();
+  const a=afterEAN.value.trim();
 
-current=current.filter(x=>x!=e);
+  if(!/^\d{1,7}$/.test(e)||!/^\d{1,7}$/.test(a)) return;
+  if(current.includes(+e)) return;
 
-const i=current.indexOf(+a);
-if(i>=0){current.splice(i+1,0,+e);lastMovedEAN=+e;}
+  current=current.filter(x=>x!=e);
+  const i=current.indexOf(+a);
 
-render();
+  if(i>=0){
+    current.splice(i+1,0,+e);
+    lastMovedEAN=+e;
+    successSound();
+    haptic(20);
+  }
 
-newEAN.value='';
-afterEAN.value='';
+  render();
+
+  newEAN.value='';
+  afterEAN.value='';
 }
 
 function back(){
-game.style.display='none';
-menu.style.display='flex';
+  gameEl.style.display='none';
+  menuEl.style.display='grid';
 }
 
 </script>
